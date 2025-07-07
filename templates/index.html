@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhotoBooth</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📸 Welcome to <span style="color: #ff6b81;">CheekyClicks</span></h1>
+
+    <!-- 🧾 Description Section -->
+    <div class="intro-box">
+      <p>
+        <strong>CheekyClicks</strong> is your fun little online photo booth where you can capture your wildest expressions, goofiest poses, or cutest smiles — all from your webcam!
+        <br/><br/>
+        🎯 Take up to <strong>4 selfies</strong> per strip with cool filters and styles. Stack them vertically into a photobooth strip and download your memory instantly.
+        <br/><br/>
+        Whether you're solo posing, with a friend, or just playing around — this is your space to click, laugh, and share.
+      </p>
+    </div>
+
+    
+
+
+    <div class="camera-section">
+      <video id="video" autoplay playsinline></video>
+      <div class="filter-buttons">
+        <button onclick="applyFilter('none')">No Filter</button>
+        <button onclick="applyFilter('grayscale(100%)')">Grayscale</button>
+        <button onclick="applyFilter('sepia(100%)')">Sepia</button>
+        <button onclick="applyFilter('contrast(150%)')">Contrast</button>
+        <button onclick="applyFilter('invert(100%)')">Invert</button>
+        <button onclick="applyFilter('blur(3px)')">Blur</button>
+        <button onclick="applyFilter('brightness(150%)')">Brightness</button>
+      </div>
+      <button onclick="capturePhoto()" class="capture-btn">📷 Take Selfie</button>
+    </div>
+
+    <div class="strip-container">
+      <div id="strip" class="photo-strip">
+        <!-- photos go here -->
+      </div>
+      <p id="timestamp"></p>
+      <p class="caption">“Caught in 4K”</p>
+      <p class="caption">“Pose. Click. Repeat.”</p>
+    </div>
+
+    <div id="final-buttons" style="display: none;">
+      <button onclick="submitStrip()">⬇️ Download Strip</button>
+      <button onclick="resetStrip()">🔁 Retake</button>
+    </div>
+    <footer>
+      <p style="font-size: 14px; color: #888; margin-top: 20px;">
+        ⚠️ One strip = 4 poses max. Go crazy, but not too crazy!
+      </p>
+    </footer>
+  </div>
+
+  <canvas id="canvas" style="display:none;"></canvas>
+  <script src="/static/script.js"></script>
+  
+</body>
+</html>
