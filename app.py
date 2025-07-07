@@ -6,7 +6,7 @@ import base64
 import os
 from zipfile import ZipFile
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', template_folder='templates')
 CAPTURE_DIR = 'static/captured'
 os.makedirs(CAPTURE_DIR, exist_ok=True)
 
@@ -54,7 +54,7 @@ def save_strip():
         y += height + margin
 
     # Add footer text
-    footer = f"Captured: {timestamp}\nSweet Memories"
+    footer = f"Captured: {timestamp}\nCaught in 4K\nPose. Click. Repeat."
     font = ImageFont.load_default()
     draw.text((border, total_height - text_area + 10), footer, fill="black", font=font)
 

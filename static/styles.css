@@ -29,11 +29,9 @@ video {
   border-radius: 12px;
 }
 
-.filter-buttons {
-  margin-top: 10px;
-}
-
-.filter-buttons button, .capture-btn, #final-buttons button {
+/* 🔘 Filter and final buttons */
+.filter-buttons button,
+#final-buttons button {
   margin: 6px;
   padding: 10px 20px;
   background-color: #ff6b81;
@@ -42,7 +40,36 @@ video {
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
+
+.filter-buttons button:hover,
+#final-buttons button:hover {
+  background-color: #ff4e6b;
+}
+
+/* Highlight Selfie Button Only */
+.highlight-btn {
+  display: inline-block;
+  margin: 20px auto;
+  padding: 14px 36px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, #6a0dad, #c94fc6);
+  border: 3px solid #a84cd2;
+  border-radius: 40px;
+  box-shadow: 0 0 20px rgba(170, 45, 180, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.highlight-btn:hover {
+  background: linear-gradient(135deg, #9c27b0, #e91e63);
+  transform: scale(1.08);
+  box-shadow: 0 0 30px rgba(255, 0, 123, 0.9);
+}
+
 
 .strip-container {
   display: flex;

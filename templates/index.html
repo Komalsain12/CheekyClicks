@@ -21,10 +21,9 @@
       </p>
     </div>
 
-    
-
-
+    <!-- 🎥 Camera Section -->
     <div class="camera-section">
+      <button onclick="startCamera()">🎥 Start Camera</button>
       <video id="video" autoplay playsinline></video>
       <div class="filter-buttons">
         <button onclick="applyFilter('none')">No Filter</button>
@@ -35,13 +34,13 @@
         <button onclick="applyFilter('blur(3px)')">Blur</button>
         <button onclick="applyFilter('brightness(150%)')">Brightness</button>
       </div>
-      <button onclick="capturePhoto()" class="capture-btn">📷 Take Selfie</button>
+      <button onclick="capturePhoto()" class="highlight-btn">📷 Take Selfie</button>
+
+
     </div>
 
     <div class="strip-container">
-      <div id="strip" class="photo-strip">
-        <!-- photos go here -->
-      </div>
+      <div id="strip" class="photo-strip"></div>
       <p id="timestamp"></p>
       <p class="caption">“Caught in 4K”</p>
       <p class="caption">“Pose. Click. Repeat.”</p>
@@ -51,6 +50,7 @@
       <button onclick="submitStrip()">⬇️ Download Strip</button>
       <button onclick="resetStrip()">🔁 Retake</button>
     </div>
+
     <footer>
       <p style="font-size: 14px; color: #888; margin-top: 20px;">
         ⚠️ One strip = 4 poses max. Go crazy, but not too crazy!
@@ -60,6 +60,5 @@
 
   <canvas id="canvas" style="display:none;"></canvas>
   <script src="/static/script.js"></script>
-  
 </body>
 </html>

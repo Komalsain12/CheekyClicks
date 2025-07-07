@@ -5,18 +5,25 @@ const strip = document.getElementById("strip");
 let photos = [];
 let currentFilter = "none";
 
-// Start webcam
-navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-  video.srcObject = stream;
-});
+// 🎥 Start webcam with permission check
+function startCamera() {
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+      video.srcObject = stream;
+    })
+    .catch(err => {
+      console.error("Camera error:", err);
+      alert("⚠️ Please allow camera access. Click the lock icon 🔒 in the address bar and enable the camera.");
+    });
+}
 
-// Apply filter
+// 🎨 Apply filter to the live video
 function applyFilter(filter) {
   currentFilter = filter;
   video.style.filter = filter;
 }
 
-// Capture photo
+// 📸 Capture a photo
 function capturePhoto() {
   if (photos.length >= 4) return;
 
@@ -33,18 +40,18 @@ function capturePhoto() {
   img.className = "preview-photo";
   strip.appendChild(img);
 
-  // Show timestamp only once
+  // Show timestamp only for first photo
   if (photos.length === 1) {
     document.getElementById("timestamp").innerText = `Captured: ${new Date().toLocaleString()}`;
   }
 
-  // Enable download and retake buttons
+  // Show download and retake buttons
   if (photos.length >= 1) {
     document.getElementById("final-buttons").style.display = "block";
   }
 }
 
-// Send data to Flask backend
+// 💾 Submit photos to Flask backend
 function submitStrip() {
   if (photos.length === 0) {
     alert("Please take at least one selfie!");
@@ -73,10 +80,13 @@ function submitStrip() {
     });
 }
 
-// Reset the photo strip
+// 🔁 Reset the photo strip
 function resetStrip() {
   photos = [];
   strip.innerHTML = "";
   document.getElementById("timestamp").innerText = "";
   document.getElementById("final-buttons").style.display = "none";
 }
+
+// ✅ Start the camera after DOM loads
+window.onload = startCamera;
