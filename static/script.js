@@ -27,29 +27,33 @@ function applyFilter(filter) {
 function capturePhoto() {
   if (photos.length >= 4) return;
 
+  // Set canvas size equal to video frame
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
+
+  // ✅ Apply selected filter to the canvas context (important for mobile!)
   ctx.filter = currentFilter;
+
+  // Draw the video frame with filter to the canvas
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+  // Get image data from canvas
   const dataUrl = canvas.toDataURL("image/jpeg");
   photos.push(dataUrl);
 
+  // Add to preview strip
   const img = document.createElement("img");
   img.src = dataUrl;
   img.className = "preview-photo";
   strip.appendChild(img);
 
-  // Show timestamp only for first photo
+  // Show timestamp and buttons after first photo
   if (photos.length === 1) {
     document.getElementById("timestamp").innerText = `Captured: ${new Date().toLocaleString()}`;
-  }
-
-  // Show download and retake buttons
-  if (photos.length >= 1) {
     document.getElementById("final-buttons").style.display = "block";
   }
 }
+
 
 // 💾 Submit photos to Flask backend
 function submitStrip() {
