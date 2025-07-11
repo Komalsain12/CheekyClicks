@@ -18,7 +18,7 @@ def index():
 def save_strip():
     data = request.json
     images = data['images']
-    timestamp = data.get('timestamp', datetime.now().strftime('%d %b %Y %H:%M'))
+    timestamp = datetime.now().strftime('%d %b %Y %H:%M')
 
     photos = []
     for b64_img in images:
@@ -45,7 +45,7 @@ def save_strip():
         (pin_center[0] + pin_radius, pin_center[1] + pin_radius)
     ], fill=(160, 160, 160))
 
-    # Paste photos
+    # Paste photos with border
     y = 40
     for img in photos:
         framed = Image.new("RGB", (width, height), "white")
@@ -54,7 +54,7 @@ def save_strip():
         y += height + margin
 
     # Add footer text
-    footer = f"Captured: {timestamp}\nSweet Memories"
+    footer = f"Captured: {timestamp}\nCaught in 4K\nPose. Click. Repeat."
     font = ImageFont.load_default()
     draw.text((border, total_height - text_area + 10), footer, fill="black", font=font)
 
