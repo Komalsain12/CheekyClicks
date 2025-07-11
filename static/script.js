@@ -18,9 +18,17 @@ function startCamera() {
 }
 
 // 🎨 Apply filter to the live video
-function applyFilter(filter) {
-  currentFilter = filter;
-  video.style.filter = filter;
+let currentFilter = 'none';
+
+function applyFilter(name) {
+  currentFilter = name;
+
+  // For Safari: use SVG filter instead of CSS filter
+  if (name === 'none') {
+    video.style.filter = 'none';
+  } else {
+    video.style.filter = `url(#${name})`;
+  }
 }
 
 // 📸 Capture a photo
@@ -30,29 +38,26 @@ function capturePhoto() {
   const width = video.videoWidth;
   const height = video.videoHeight;
 
-  // Create a temporary offscreen canvas
-  const tempCanvas = document.createElement("canvas");
-  const tempCtx = tempCanvas.getContext("2d");
-  tempCanvas.width = width;
-  tempCanvas.height = height;
+  canvas.width = width;
+  canvas.height = height;
+  ctx.drawImage(video, 0, 0, width, height);
 
-  // Apply the selected filter to the canvas context
-  tempCtx.filter = currentFilter;
+  let imgDataUrl = canvas.toDataURL("image/jpeg");
 
-  // Draw the video frame with filter
-  tempCtx.drawImage(video, 0, 0, width, height);
+  // Save unfiltered image to pass to server
+  photos.push(imgDataUrl);
 
-  // Get the final filtered image
-  const dataUrl = tempCanvas.toDataURL("image/jpeg");
-  photos.push(dataUrl);
-
-  // Show preview strip
+  // Show it as preview with the same filter applied for visual matching
   const img = document.createElement("img");
-  img.src = dataUrl;
+  img.src = imgDataUrl;
   img.className = "preview-photo";
+
+  if (currentFilter !== 'none') {
+    img.style.filter = `url(#${currentFilter})`; // Works in Safari
+  }
+
   strip.appendChild(img);
 
-  // Show timestamp and buttons
   if (photos.length === 1) {
     document.getElementById("timestamp").innerText = `Captured: ${new Date().toLocaleString()}`;
     document.getElementById("final-buttons").style.display = "block";
