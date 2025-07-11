@@ -5,35 +5,28 @@ const strip = document.getElementById("strip");
 let photos = [];
 let currentFilter = "none";
 
-// 🎥 Start webcam with permission check
-function startCamera() {
-  navigator.mediaDevices.getUserMedia({ video: true })
-    .then(stream => {
-      video.srcObject = stream;
-    })
-    .catch(err => {
-      console.error("Camera error:", err);
-      alert("⚠️ Please allow camera access. Click the lock icon 🔒 in the address bar and enable the camera.");
-    });
-}
+// Start webcam
+navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+  video.srcObject = stream;
+});
 
-// 🎨 Apply filter to the live video
-let currentFilter = 'none';
+// Apply filter visually to video
+function applyFilter(filterName) {
+  currentFilter = filterName;
 
-function applyFilter(name) {
-  currentFilter = name;
-
-  // For Safari: use SVG filter instead of CSS filter
-  if (name === 'none') {
-    video.style.filter = 'none';
+  if (filterName === "none") {
+    video.style.filter = "none";
   } else {
-    video.style.filter = `url(#${name})`;
+    video.style.filter = `url(#${filterName})`; // Safari-compatible SVG filters
   }
 }
 
-// 📸 Capture a photo
+// Capture photo from video
 function capturePhoto() {
-  if (photos.length >= 4) return;
+  if (photos.length >= 4) {
+    alert("You can only capture up to 4 selfies per strip.");
+    return;
+  }
 
   const width = video.videoWidth;
   const height = video.videoHeight;
@@ -42,18 +35,17 @@ function capturePhoto() {
   canvas.height = height;
   ctx.drawImage(video, 0, 0, width, height);
 
-  let imgDataUrl = canvas.toDataURL("image/jpeg");
+  // Save the plain image (server can apply filter later if needed)
+  const imageDataURL = canvas.toDataURL("image/jpeg");
+  photos.push(imageDataURL);
 
-  // Save unfiltered image to pass to server
-  photos.push(imgDataUrl);
-
-  // Show it as preview with the same filter applied for visual matching
+  // Show preview image with same filter
   const img = document.createElement("img");
-  img.src = imgDataUrl;
+  img.src = imageDataURL;
   img.className = "preview-photo";
 
-  if (currentFilter !== 'none') {
-    img.style.filter = `url(#${currentFilter})`; // Works in Safari
+  if (currentFilter !== "none") {
+    img.style.filter = `url(#${currentFilter})`;
   }
 
   strip.appendChild(img);
@@ -64,19 +56,22 @@ function capturePhoto() {
   }
 }
 
-
-
-// 💾 Submit photos to Flask backend
+// Submit strip to Flask backend
 function submitStrip() {
   if (photos.length === 0) {
     alert("Please take at least one selfie!");
     return;
   }
 
+  const timestamp = new Date().toLocaleString();
+
   fetch("/save_strip", {
     method: "POST",
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ images: photos })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      images: photos,
+      timestamp: timestamp
+    })
   })
     .then(res => res.json())
     .then(data => {
@@ -91,17 +86,15 @@ function submitStrip() {
     })
     .catch(err => {
       console.error(err);
-      alert("Error while generating photo strip.");
+      alert("Something went wrong while generating the strip.");
     });
 }
 
-// 🔁 Reset the photo strip
+
+// Reset the strip
 function resetStrip() {
   photos = [];
   strip.innerHTML = "";
   document.getElementById("timestamp").innerText = "";
   document.getElementById("final-buttons").style.display = "none";
 }
-
-// ✅ Start the camera after DOM loads
-window.onload = startCamera;
