@@ -25,33 +25,45 @@ function applyFilter(filter) {
 
 // 📸 Capture a photo
 function capturePhoto() {
-  if (photos.length >= 4) return;
+  if (photos.length >= 4) {
+    alert("You can only take 4 selfies per strip.");
+    return;
+  }
 
-  // Set canvas size equal to video frame
+  // Set canvas size
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
 
-  
+  // Trick: draw the video onto canvas with filters applied in DOM
+  // To preserve the filter visually, we use a temporary trick
+  const tempVideo = video.cloneNode(true);
+  tempVideo.style.position = 'absolute';
+  tempVideo.style.top = '-10000px'; // offscreen
+  tempVideo.style.filter = video.style.filter; // apply same filter
 
-  // Draw the video frame with filter to the canvas
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  document.body.appendChild(tempVideo);
 
-  // Get image data from canvas
-  const dataUrl = canvas.toDataURL("image/jpeg");
-  photos.push(dataUrl);
+  // Wait 100ms for video to fully load (especially on Safari)
+  setTimeout(() => {
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL("image/jpeg");
 
-  // Add to preview strip
-  const img = document.createElement("img");
-  img.src = dataUrl;
-  img.className = "preview-photo";
-  strip.appendChild(img);
+    photos.push(dataUrl);
 
-  // Show timestamp and buttons after first photo
-  if (photos.length === 1) {
-    document.getElementById("timestamp").innerText = `Captured: ${new Date().toLocaleString()}`;
-    document.getElementById("final-buttons").style.display = "block";
-  }
+    const img = document.createElement("img");
+    img.src = dataUrl;
+    img.className = "preview-photo";
+    strip.appendChild(img);
+
+    if (photos.length === 1) {
+      document.getElementById("timestamp").innerText = `Captured: ${new Date().toLocaleString()}`;
+      document.getElementById("final-buttons").style.display = "block";
+    }
+
+    tempVideo.remove(); // clean up
+  }, 100);
 }
+
 
 
 // 💾 Submit photos to Flask backend
