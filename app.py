@@ -18,7 +18,8 @@ def index():
 def save_strip():
     data = request.json
     images = data['images']
-    timestamp = datetime.now().strftime('%d %b %Y %H:%M')
+    timestamp = data.get('timestamp', datetime.now().strftime('%d %b %Y %H:%M'))
+
 
     photos = []
     for b64_img in images:

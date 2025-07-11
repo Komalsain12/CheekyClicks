@@ -27,38 +27,31 @@ function applyFilter(filter) {
 function capturePhoto() {
   if (photos.length >= 4) return;
 
-  const width = video.videoWidth;
-  const height = video.videoHeight;
+  // Set canvas size equal to video frame
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
 
-  // Create a temporary offscreen canvas
-  const tempCanvas = document.createElement("canvas");
-  const tempCtx = tempCanvas.getContext("2d");
-  tempCanvas.width = width;
-  tempCanvas.height = height;
+  
 
-  // Apply the selected filter to the canvas context
-  tempCtx.filter = currentFilter;
+  // Draw the video frame with filter to the canvas
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-  // Draw the video frame with filter
-  tempCtx.drawImage(video, 0, 0, width, height);
-
-  // Get the final filtered image
-  const dataUrl = tempCanvas.toDataURL("image/jpeg");
+  // Get image data from canvas
+  const dataUrl = canvas.toDataURL("image/jpeg");
   photos.push(dataUrl);
 
-  // Show preview strip
+  // Add to preview strip
   const img = document.createElement("img");
   img.src = dataUrl;
   img.className = "preview-photo";
   strip.appendChild(img);
 
-  // Show timestamp and buttons
+  // Show timestamp and buttons after first photo
   if (photos.length === 1) {
     document.getElementById("timestamp").innerText = `Captured: ${new Date().toLocaleString()}`;
     document.getElementById("final-buttons").style.display = "block";
   }
 }
-
 
 
 // 💾 Submit photos to Flask backend
@@ -68,11 +61,13 @@ function submitStrip() {
     return;
   }
 
+  const capturedTime = new Date().toLocaleString();
+
   fetch("/save_strip", {
     method: "POST",
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      images: imageList,
+      images: photos,
       timestamp: capturedTime
     })
   })
@@ -92,6 +87,7 @@ function submitStrip() {
       alert("Error while generating photo strip.");
     });
 }
+
 
 // 🔁 Reset the photo strip
 function resetStrip() {
